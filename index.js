@@ -2,15 +2,59 @@ const state = {
     tasklist: [],
 };
 
+
+
 // DOM manipulation
 const taskModal = document.querySelector(".task__modal__body");
+const taskContent = document.querySelector(".task__Content");
 console.log(taskModal);
+
+
+
+// Dynamic Modal cards on the home page
+const htmlModalContent = ({ id, title, description, type, url }) => {
+    const date = new Date(parseInt(id));
+    return `
+    <div id = ${id}>
+    ${
+        // img-fluid is used for responsive image
+
+        url && `<img width = '100%' src = ${url} alt = 'Insert your image' class = 'img-fluid place__holder__image mb-3'/>`
+        }
+    <strong class = 'text-sm text-muted'>Created on ${date.toDateString()}</strong>\
+    <h2 class = 'my-3'>${title}</h2>
+    <p class = 'lead'>${description}</p>
+    <span class = 'badge bg-primary m-1'>${type}</span>
+    </div>
+    `;
+};
+
+
+
+// Here we will be updating the local storage (i.e. Modal/Cards will be shown on the Home page UI)
+const updateLocalStorage = () => {
+    localStorage.setItem('task', JSON.stringify({
+        tasks: state.tasklist,
+    }));
+};
+
+
+// To get the data/cards or modals on UI from the local storage (Browser storage)
+const localInitialData= () => {
+    const localStorageCopy = JSON.parse(localStorage.task);
+
+    if(localStorageCopy)
+        state.tasklist = localStorageCopy.task;
+
+    state.tasklist.map((carddata) => {
+        taskContent.insertAdjacentHTML
+    })
+}
+
 
 
 // empty `` is basically used to return only single data/value 
 // `` can be used to insert html code/elements in js  
-
-
 // htmlTaskContent() to create the card on the UI ie home-page
 const htmlTaskContent = ({ id, title, description, type, url }) => `
 <div class = 'col-md-6 col-lg-4 mt-3' id = ${id} key = ${id}>
@@ -32,7 +76,7 @@ const htmlTaskContent = ({ id, title, description, type, url }) => `
 
             // here ($) symbole is used to insert js code inside html code 
                 ${url && `<img width = '100%' src = ${url} alt = 'Insert your image' class = 'card-image-top md-3 rounded-lg'/>`
-                }
+    }
                 <h4 class = 'task__card__title'>${title}</h4>
                 <p class = 'description trim-3-lines text-muted' data-gram_editor = 'false'>${description}</p>
 
@@ -50,3 +94,8 @@ const htmlTaskContent = ({ id, title, description, type, url }) => `
     </div>
 </div> 
 `;
+
+
+
+
+
