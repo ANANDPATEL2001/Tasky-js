@@ -1,13 +1,21 @@
 const state = {
-    tasklist: [],
+    taskList: [],
 };
 
 
 
+
 // DOM manipulation
-const taskModal = document.querySelector(".task__modal__body");
-const taskContent = document.querySelector(".task__Content");
-console.log(taskModal);
+// Below is Needed to add for preview of the card
+const taskModel = document.querySelector(".task__modal__body");
+const taskContents = document.querySelector(".task__contents");
+
+// querySelector() and querySelectorAll()
+// These are used from js to insert any kind of html text which would be reflected on the UI
+
+// getElementById(), getElementByClass(), getElementByTagName()
+// These are used when we want to process the user data form html amd use it in js
+
 
 
 
@@ -31,25 +39,53 @@ const htmlModalContent = ({ id, title, description, type, url }) => {
 
 
 
+
 // Here we will be updating the local storage (i.e. Modal/Cards will be shown on the Home page UI)
 const updateLocalStorage = () => {
     localStorage.setItem('task', JSON.stringify({
-        tasks: state.tasklist,
+        tasks: state.taskList,
     }));
 };
 
 
+
 // To get the data/cards or modals on UI from the local storage (Browser storage)
-const localInitialData= () => {
+const loadInitialData = () => {
     const localStorageCopy = JSON.parse(localStorage.task);
 
-    if(localStorageCopy)
-        state.tasklist = localStorageCopy.task;
+    if (localStorageCopy) state.taskList = localStorageCopy.tasks;
 
-    state.tasklist.map((carddata) => {
-        taskContent.insertAdjacentHTML
-    })
-}
+    state.taskList.map((cardData) => {
+        taskContents.insertAdjacentHTML("beforeend", htmlTaskContent(cardData));
+    });
+};
+
+
+
+
+const handleSubmit = (event) => {
+    const id = `${Date.now()}`;
+    const input = {
+        url: document.getElementById("imageUrl").value,
+        title: document.getElementById("taskTitle").value,
+        type: document.getElementById("taskType").value,
+        description: document.getElementById("taskDescription").value,
+    };
+    if (input.title === "" || input.type === "" || input.description === "") {
+        return alert("Please fill all the fields !!");
+    }
+    taskContents.insertAdjacentHTML("beforeend", htmlTaskContent({
+        // (...) is basically spread operator used below
+        ...input,
+        id,
+    }));
+    // Update the taskList for first time
+    state.taskList.push({ ...input, id });
+
+    // Updating same on the local storage 
+    updateLocalStorage();
+};
+
 
 
 
@@ -71,25 +107,26 @@ const htmlTaskContent = ({ id, title, description, type, url }) => `
             <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
             </svg>
             </button>
+        </div>
 
-            <div class = 'card-body'>
 
-            // here ($) symbole is used to insert js code inside html code 
-                ${url && `<img width = '100%' src = ${url} alt = 'Insert your image' class = 'card-image-top md-3 rounded-lg'/>`
-    }
-                <h4 class = 'task__card__title'>${title}</h4>
-                <p class = 'description trim-3-lines text-muted' data-gram_editor = 'false'>${description}</p>
+        <div class = 'card-body'>
 
-                <div class = 'tags text-white d-flex flex-wrap'>
+        // here ($) symbole is used to insert js code inside html code 
+            ${url && `<img width = '100%' src = ${url} alt = 'Insert your image' class = 'card-image-top md-3 rounded-lg'/>`
+            }
+            <h4 class = 'task__card__title'>${title}</h4>
+            <p class = 'description trim-3-lines text-muted' data-gram_editor = 'false'>${description}</p>
 
-                // here (.badge) is used to display no. of times the button has been clicked on the UI
-                    <span class = 'badge bg-primary m-1'>${type}</span>
-                </div>
+            <div class = 'tags text-white d-flex flex-wrap'>
+
+            // here (.badge) is used to display no. of times the button has been clicked on the UI
+                <span class = 'badge bg-primary m-1'>${type}</span>
             </div>
+        </div>
 
-            <div class = 'card-footer'>
-                <button type = 'button' class = 'btn btn-primary float-right' data-toggle = 'modal' data-target = '#showTask'>Open Task</button>
-            </div>
+        <div class = 'card-footer'>
+            <button type = 'button' class = 'btn btn-primary float-right' data-toggle = 'modal' data-target = '#showTask' id = ${id}>Open Task</button>
         </div>
     </div>
 </div> 
